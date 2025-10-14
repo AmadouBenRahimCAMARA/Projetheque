@@ -29,7 +29,7 @@ Assurez-vous que les logiciels suivants sont installés sur votre système avec 
 *   **npm**: Gestionnaire de paquets Node.js (généralement inclus avec Node.js).
     *   Vérifiez avec : `npm -v`
 *   **Une base de données**:
-    *   **MySQL(qu'on a utilisé) ou PostgreSQL si vous préférerer**
+    *   **MySQL(qu'on a utilisé) ou PostgreSQL si vous préférer**
 
 ## 2. Installation du Backend (Laravel)
 
@@ -70,7 +70,7 @@ Les principales dépendances PHP sont :
         ```
 
     *   **Configuration de la base de données :**
-        *   **Pour SQLite (recommandé) :**
+        *   **Pour SQLite :**
             Assurez-vous que la ligne `DB_CONNECTION=sqlite` est présente. Vous n'avez pas besoin de configurer `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` pour SQLite.
             ```dotenv
             DB_CONNECTION=sqlite
@@ -82,7 +82,7 @@ Les principales dépendances PHP sont :
             ```
             Le fichier `database/database.sqlite` sera créé automatiquement lors de la première migration.
 
-        *   **Pour MySQL/PostgreSQL :**
+        *   **Pour MySQL/PostgreSQL(On a fait avc MySQL) :**
             Configurez les informations de connexion appropriées. **C'est ici que vous devrez adapter le `DB_PASSWORD`** (et potentiellement `DB_USERNAME` et `DB_DATABASE`) si vous utilisez une base de données différente de SQLite.
             ```dotenv
             DB_CONNECTION=mysql # ou pgsql
