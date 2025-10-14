@@ -82,7 +82,7 @@ Les principales dépendances PHP sont :
             ```
             Le fichier `database/database.sqlite` sera créé automatiquement lors de la première migration.
 
-        *   **Pour MySQL/PostgreSQL(On a fait avc MySQL) :**
+        *   **Pour MySQL/PostgreSQL(On a fait avec MySQL) :**
             Configurez les informations de connexion appropriées. **C'est ici que vous devrez adapter le `DB_PASSWORD`** (et potentiellement `DB_USERNAME` et `DB_DATABASE`) si vous utilisez une base de données différente de SQLite.
             ```dotenv
             DB_CONNECTION=mysql # ou pgsql
@@ -184,6 +184,7 @@ Les principales dépendances Node.js sont :
 Une fois que les serveurs backend et frontend sont tous deux en cours d'exécution :
 
 *   **Accédez à l'application frontend** dans votre navigateur : `http://localhost:3000`
+*   Tester l'application de fond en comble à votre guise en créant les comptes, vous connectant et effectuant les possibilités offertes
 *   Vous devriez pouvoir vous connecter avec l'utilisateur administrateur que vous avez créé (`admin@example.com` avec le mot de passe choisi).
 
 ---
