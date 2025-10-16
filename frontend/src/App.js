@@ -8,6 +8,8 @@ import ProjetListPage from './pages/ProjetListPage';
 import ProjetDetailPage from './pages/ProjetDetailPage';
 import ProjetFormPage from './pages/ProjetFormPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import RessourceListPage from './pages/RessourceListPage';
+import RessourceFormPage from './pages/RessourceFormPage';
 import { CssBaseline, ThemeProvider, Box } from '@mui/material';
 import NavBar from './components/NavBar';
 import theme from './theme/theme';
@@ -29,6 +31,8 @@ function App() {
                             <Route path="/projets/:id" element={<ProjetDetailPage />} />
                             <Route path="/projets/create" element={<ProjetFormPage />} />
                             <Route path="/projets/:id/edit" element={<ProjetFormPage />} />
+                            <Route path="/ressources" element={<RessourceListPage />} />
+                            <Route path="/ressources/create" element={<RessourceFormPage />} />
                         <Route path="/admin" element={<AdminDashboardPage />} />
                         </Routes>
                     </Box>

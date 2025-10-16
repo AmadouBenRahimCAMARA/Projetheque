@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CommentaireController;
 use App\Http\Controllers\Api\FiliereController;
 use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\ProjetController;
+use App\Http\Controllers\Api\RessourcePedagogiqueController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Projets
     Route::apiResource('projets', ProjetController::class);
+
+    // Ressources Pédagogiques
+    Route::apiResource('ressources-pedagogiques', RessourcePedagogiqueController::class);
+    Route::get('/ressources-pedagogiques/{ressource}/download', [RessourcePedagogiqueController::class, 'download']);
 
     // Filieres (protégé par le middleware admin pour CUD)
     Route::apiResource('filieres', FiliereController::class);

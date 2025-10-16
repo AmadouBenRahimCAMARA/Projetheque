@@ -81,7 +81,10 @@ const NavBar = () => {
                             onClose={handleClose}
                         >
                             {isAuthenticated && (
-                                <MenuItem onClick={() => handleNavigation('/projets')}>Projets</MenuItem>
+                                <div>
+                                    <MenuItem onClick={() => handleNavigation('/projets')}>Projets</MenuItem>
+                                    <MenuItem onClick={() => handleNavigation('/ressources')}>Ressources</MenuItem>
+                                </div>
                             )}
                             {isAuthenticated && user && user.role === 'etudiant' && (
                                 <MenuItem onClick={() => handleNavigation('/projets/create')}>Soumettre Projet</MenuItem>
@@ -102,9 +105,14 @@ const NavBar = () => {
                 ) : (
                     <Box>
                         {isAuthenticated && (
-                            <Button color="inherit" component={Link} to="/projets">
-                                Projets
-                            </Button>
+                            <>
+                                <Button color="inherit" component={Link} to="/projets">
+                                    Projets
+                                </Button>
+                                <Button color="inherit" component={Link} to="/ressources">
+                                    Ressources
+                                </Button>
+                            </>
                         )}
                         {isAuthenticated && user && user.role === 'etudiant' && (
                             <Button color="inherit" component={Link} to="/projets/create">
