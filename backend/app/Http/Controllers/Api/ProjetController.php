@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProjetController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum')->except(['index', 'show', 'download']);
-    }
+
 
     public function index(Request $request)
     {
@@ -77,7 +74,7 @@ class ProjetController extends Controller
             'description' => $validatedData['description'],
             'annee_academique' => $validatedData['annee_academique'],
             'filiere_id' => $validatedData['filiere_id'],
-            'lien_github' => $validatedData['lien_github'],
+            'lien_github' => $validatedData['lien_github'] ?? null,
             'utilisateur_id' => auth()->id(),
             'fichiers' => $fichiers,
         ]);
@@ -163,7 +160,7 @@ class ProjetController extends Controller
             'description' => $validatedData['description'],
             'annee_academique' => $validatedData['annee_academique'],
             'filiere_id' => $validatedData['filiere_id'],
-            'lien_github' => $validatedData['lien_github'],
+            'lien_github' => $validatedData['lien_github'] ?? null,
             'fichiers' => $fichiers,
         ]);
 

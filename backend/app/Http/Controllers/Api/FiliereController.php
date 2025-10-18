@@ -8,11 +8,7 @@ use Illuminate\Http\Request;
 
 class FiliereController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum')->except(['index', 'show']);
-        $this->middleware('admin')->except(['index', 'show']);
-    }
+
 
     public function index()
     {

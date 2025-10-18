@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import projetService from '../services/projetService';
-import { Container, Typography, Box, CircularProgress, Alert, Card, CardContent, List, ListItem, ListItemText, Divider, Chip, Link as MuiLink, Stack } from '@mui/material';
+import noteService from '../services/noteService';
+import { Container, Typography, Box, CircularProgress, Alert, Card, CardContent, List, ListItem, ListItemText, Divider, Chip, Link as MuiLink, Stack, TextField, Button } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CodeIcon from '@mui/icons-material/Code';
@@ -10,27 +11,47 @@ import { useState, useEffect } from 'react';
 
 const ProjetDetailPage = () => {
     const { id } = useParams();
-    const { token } = useAuth();
+    const { user, token } = useAuth();
     const [projet, setProjet] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [note, setNote] = useState('');
+    const [commentaireNote, setCommentaireNote] = useState('');
+    const [noteLoading, setNoteLoading] = useState(false);
+    const [noteError, setNoteError] = useState('');
+
+    const fetchProjet = async () => {
+        try {
+            const response = await projetService.getProjet(id, token);
+            setProjet(response.data);
+        } catch (err) {
+            setError('Erreur lors du chargement du projet.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchProjet = async () => {
-            try {
-                const response = await projetService.getProjet(id, token);
-                setProjet(response.data);
-            } catch (err) {
-                setError('Erreur lors du chargement du projet.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         if (token) {
             fetchProjet();
         }
     }, [id, token]);
+
+    const handleNoteSubmit = async (e) => {
+        e.preventDefault();
+        setNoteLoading(true);
+        setNoteError('');
+        try {
+            await noteService.createNote(id, { note, commentaire: commentaireNote }, token);
+            setNote('');
+            setCommentaireNote('');
+            fetchProjet(); // Re-fetch project to show the new note
+        } catch (err) {
+            setNoteError(err.response?.data?.message || 'Une erreur est survenue lors de l\'ajout de la note.');
+        } finally {
+            setNoteLoading(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -64,6 +85,8 @@ const ProjetDetailPage = () => {
             default: return <DescriptionIcon />;
         }
     };
+
+    const hasAlreadyNoted = projet.notes.length > 0;
 
     return (
         <Container maxWidth="md" sx={{ mt: 4 }}>
@@ -133,6 +156,35 @@ const ProjetDetailPage = () => {
                         </List>
                     ) : (
                         <Typography variant="body2" color="text.secondary">Aucune note pour ce projet.</Typography>
+                    )}
+
+                    {user && user.role === 'enseignant' && !hasAlreadyNoted && (
+                        <Box component="form" onSubmit={handleNoteSubmit} sx={{ mt: 2 }}>
+                            <Typography variant="h6">Ajouter une note</Typography>
+                            <TextField
+                                label="Note /20"
+                                type="number"
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
+                                fullWidth
+                                required
+                                margin="normal"
+                                inputProps={{ min: 0, max: 20, step: "0.5" }}
+                            />
+                            <TextField
+                                label="Commentaire (optionnel)"
+                                value={commentaireNote}
+                                onChange={(e) => setCommentaireNote(e.target.value)}
+                                multiline
+                                rows={3}
+                                fullWidth
+                                margin="normal"
+                            />
+                            {noteError && <Alert severity="error" sx={{ mb: 2 }}>{noteError}</Alert>}
+                            <Button type="submit" variant="contained" disabled={noteLoading}>
+                                {noteLoading ? <CircularProgress size={24} /> : 'Soumettre la note'}
+                            </Button>
+                        </Box>
                     )}
 
                     <Divider sx={{ my: 3 }} />

@@ -9,11 +9,7 @@ use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-        $this->middleware('enseignant')->except(['index', 'show']);
-    }
+
 
     public function index(Projet $projet)
     {
@@ -28,13 +24,9 @@ class NoteController extends Controller
             'commentaire' => 'nullable|string',
         ]);
 
-        // Vérifier qu'un enseignant ne note pas deux fois le même projet
-        $existingNote = Note::where('projet_id', $projet->id)
-                              ->where('enseignant_id', auth()->id())
-                              ->first();
-
-        if ($existingNote) {
-            return response()->json(['message' => 'Vous avez déjà noté ce projet.'], 409);
+        // Vérifier si le projet a déjà été noté
+        if ($projet->notes()->exists()) {
+            return response()->json(['message' => 'Ce projet a déjà été noté.'], 409);
         }
 
         $note = $projet->notes()->create([

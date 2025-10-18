@@ -52,7 +52,12 @@ const RessourceFormPage = () => {
             await ressourcePedagogiqueService.createRessource(formData, token);
             navigate('/ressources');
         } catch (err) {
-            setError('Erreur lors de la création de la ressource. Veuillez vérifier les champs.');
+            if (err.response && err.response.data && err.response.data.errors) {
+                const errorMessages = Object.values(err.response.data.errors).flat().join(' ');
+                setError(`Erreur de validation: ${errorMessages}`);
+            } else {
+                setError('Erreur lors de la création de la ressource. Veuillez vérifier les champs.');
+            }
             console.error(err);
         } finally {
             setLoading(false);

@@ -9,10 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class RessourcePedagogiqueController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-    }
+
 
     public function index(Request $request)
     {
@@ -53,44 +50,57 @@ class RessourcePedagogiqueController extends Controller
         return response()->json($ressource->load('utilisateur', 'filiere'), 201);
     }
 
-    public function show(RessourcePedagogique $ressources_pedagogique)
+    public function show(RessourcePedagogique $ressourcePedagogique)
     {
-        return $ressources_pedagogique->load(['utilisateur', 'filiere']);
+        return $ressourcePedagogique->load(['utilisateur', 'filiere']);
     }
 
-    public function update(Request $request, RessourcePedagogique $ressources_pedagogique)
+    public function update(Request $request, RessourcePedagogique $ressourcePedagogique)
     {
-        $this->authorize('update', $ressources_pedagogique);
+        $this->authorize('update', $ressourcePedagogique);
 
         $validatedData = $request->validate([
             'titre' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
             'type' => 'sometimes|required|in:cours,exercice,sujet_examen',
             'filiere_id' => 'sometimes|required|exists:filieres,id',
+            'fichier' => 'nullable|file|mimes:pdf|max:20480', // 20MB Max
         ]);
 
-        $ressources_pedagogique->update($validatedData);
+        if ($request->hasFile('fichier')) {
+            // Delete old file
+            if ($ressourcePedagogique->chemin_fichier) {
+                Storage::disk('public')->delete($ressourcePedagogique->chemin_fichier);
+            }
+            // Store new file
+            $validatedData['chemin_fichier'] = $request->file('fichier')->store('ressources_pedagogiques', 'public');
+        }
 
-        return response()->json($ressources_pedagogique->load('utilisateur', 'filiere'), 200);
+        $ressourcePedagogique->update($validatedData);
+
+        return response()->json($ressourcePedagogique->load('utilisateur', 'filiere'), 200);
     }
 
-    public function destroy(RessourcePedagogique $ressources_pedagogique)
+    public function destroy(RessourcePedagogique $ressourcePedagogique)
     {
-        $this->authorize('delete', $ressources_pedagogique);
+        $this->authorize('delete', $ressourcePedagogique);
 
-        Storage::disk('public')->delete($ressources_pedagogique->chemin_fichier);
+        // Check if a file path exists before attempting to delete
+        if ($ressourcePedagogique->chemin_fichier) {
+            Storage::disk('public')->delete($ressourcePedagogique->chemin_fichier);
+        }
 
-        $ressources_pedagogique->delete();
+        $ressourcePedagogique->delete();
 
         return response()->json(null, 204);
     }
 
-    public function download(RessourcePedagogique $ressources_pedagogique)
+    public function download(RessourcePedagogique $ressourcePedagogique)
     {
-        if (!Storage::disk('public')->exists($ressources_pedagogique->chemin_fichier)) {
+        if (!Storage::disk('public')->exists($ressourcePedagogique->chemin_fichier)) {
             return response()->json(['message' => 'Fichier non trouvé sur le serveur.'], 404);
         }
 
-        return Storage::disk('public')->download($ressources_pedagogique->chemin_fichier);
+        return Storage::disk('public')->download($ressourcePedagogique->chemin_fichier);
     }
 }
