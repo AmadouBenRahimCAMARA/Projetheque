@@ -155,7 +155,7 @@ const ProjetListPage = () => {
                         <Grid item key={projet.id} xs={12} sm={6} md={4}>
                             <Card>
                                 <CardContent>
-                                    <Typography variant="h6" component="div">
+                                    <Typography variant="h6" component="div" color="primary">
                                         {projet.titre}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
@@ -177,7 +177,7 @@ const ProjetListPage = () => {
                                     )}
                                 </CardContent>
                                 <CardActions>
-                                    <Button size="small" component={Link} to={`/projets/${projet.id}`}>
+                                    <Button variant="contained" color="success" size="small" component={Link} to={`/projets/${projet.id}`}>
                                         Voir Détails
                                     </Button>
                                 </CardActions>

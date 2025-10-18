@@ -37,7 +37,7 @@ class RessourcePedagogiquePolicy
      */
     public function update(User $user, RessourcePedagogique $ressourcePedagogique): bool
     {
-        return $user->id === $ressourcePedagogique->utilisateur_id || $user->role === 'administrateur';
+        return $user->id == $ressourcePedagogique->utilisateur_id || $user->role === 'administrateur';
     }
 
     /**
@@ -45,7 +45,7 @@ class RessourcePedagogiquePolicy
      */
     public function delete(User $user, RessourcePedagogique $ressourcePedagogique): bool
     {
-        return $user->id === $ressourcePedagogique->utilisateur_id || $user->role === 'administrateur';
+        return $user->id == $ressourcePedagogique->utilisateur_id || $user->role === 'administrateur';
     }
 
     /**

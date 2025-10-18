@@ -5,7 +5,8 @@ import filiereService from '../services/filiereService';
 import { useAuth } from '../contexts/AuthContext';
 import {
     Container, Typography, Box, CircularProgress, Alert, Grid, Card, CardContent,
-    CardActions, Button, FormControl, InputLabel, Select, MenuItem, Stack
+    CardActions, Button, FormControl, InputLabel, Select, MenuItem, Stack,
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
 
@@ -17,6 +18,10 @@ const RessourceListPage = () => {
     const [typeFilter, setTypeFilter] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    // State for delete confirmation dialog
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [ressourceIdToDelete, setRessourceIdToDelete] = useState(null);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -69,15 +74,30 @@ const RessourceListPage = () => {
             .catch(error => console.error('Erreur de téléchargement', error));
     };
 
-    const handleDelete = (id) => {
-        if (window.confirm('Êtes-vous sûr de vouloir supprimer cette ressource ?')) {
-            ressourcePedagogiqueService.deleteRessource(id, token)
+    // Opens the confirmation dialog
+    const handleDeleteClick = (id) => {
+        setRessourceIdToDelete(id);
+        setOpenDeleteDialog(true);
+    };
+
+    // Closes the confirmation dialog
+    const handleCloseDeleteDialog = () => {
+        setOpenDeleteDialog(false);
+        setRessourceIdToDelete(null);
+    };
+
+    // Handles the actual deletion after confirmation
+    const handleConfirmDelete = () => {
+        if (ressourceIdToDelete) {
+            ressourcePedagogiqueService.deleteRessource(ressourceIdToDelete, token)
                 .then(() => {
-                    setRessources(ressources.filter(r => r.id !== id));
+                    setRessources(ressources.filter(r => r.id !== ressourceIdToDelete));
+                    handleCloseDeleteDialog();
                 })
                 .catch(error => {
                     setError('Erreur lors de la suppression de la ressource.');
-                    console.error('Erreur de suppression', error)
+                    console.error('Erreur de suppression', error);
+                    handleCloseDeleteDialog();
                 });
         }
     };
@@ -131,16 +151,16 @@ const RessourceListPage = () => {
                         <Grid item key={ressource.id} xs={12} sm={6} md={4}>
                             <Card>
                                 <CardContent>
-                                    <Typography variant="h6" component="div">{ressource.titre}</Typography>
+                                    <Typography variant="h6" component="div" color="primary">{ressource.titre}</Typography>
                                     <Typography variant="body2" color="text.secondary">{ressource.description.substring(0, 100)}...</Typography>
                                     <Typography variant="caption" display="block" sx={{ mt: 1 }}>Type: {ressource.type}</Typography>
                                     <Typography variant="caption" display="block">Filière: {ressource.filiere.nom}</Typography>
                                     <Typography variant="caption" display="block">Auteur: {ressource.utilisateur.nom}</Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button size="small" onClick={() => handleDownload(ressource)}>Télécharger</Button>
+                                    <Button variant="contained" color="success" size="small" onClick={() => handleDownload(ressource)}>Télécharger</Button>
                                     {(user && (user.id === ressource.utilisateur_id || user.role === 'administrateur')) && (
-                                        <Button size="small" color="error" onClick={() => handleDelete(ressource.id)}>Supprimer</Button>
+                                        <Button variant="contained" size="small" color="error" onClick={() => handleDeleteClick(ressource.id)}>Supprimer</Button>
                                     )}
                                 </CardActions>
                             </Card>
@@ -154,6 +174,29 @@ const RessourceListPage = () => {
                     </Grid>
                 )}
             </Grid>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog
+                open={openDeleteDialog}
+                onClose={handleCloseDeleteDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Confirmer la suppression"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Êtes-vous sûr de vouloir supprimer cette ressource ? Cette action est irréversible.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteDialog}>Annuler</Button>
+                    <Button onClick={handleConfirmDelete} color="error" autoFocus>
+                        Confirmer
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 };

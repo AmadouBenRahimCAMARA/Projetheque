@@ -81,8 +81,10 @@ class RessourcePedagogiqueController extends Controller
         return response()->json($ressourcePedagogique->load('utilisateur', 'filiere'), 200);
     }
 
-    public function destroy(RessourcePedagogique $ressourcePedagogique)
+    public function destroy($id)
     {
+        $ressourcePedagogique = RessourcePedagogique::findOrFail($id);
+
         $this->authorize('delete', $ressourcePedagogique);
 
         // Check if a file path exists before attempting to delete
@@ -95,12 +97,12 @@ class RessourcePedagogiqueController extends Controller
         return response()->json(null, 204);
     }
 
-    public function download(RessourcePedagogique $ressourcePedagogique)
+    public function download(RessourcePedagogique $ressource)
     {
-        if (!Storage::disk('public')->exists($ressourcePedagogique->chemin_fichier)) {
+        if (!Storage::disk('public')->exists($ressource->chemin_fichier)) {
             return response()->json(['message' => 'Fichier non trouvé sur le serveur.'], 404);
         }
 
-        return Storage::disk('public')->download($ressourcePedagogique->chemin_fichier);
+        return Storage::disk('public')->download($ressource->chemin_fichier);
     }
 }
