@@ -1,4 +1,4 @@
-# Projetheque - Gestion de Projets Étudiants
+# Projetheque - Bibliothèque numérique pour Projets Étudiants
 
 Bienvenue dans le projet Projetheque, une application de bibliothèque numérique pour consulter, soumettre et noter les projets académiques des étudiants développé avec un backend Laravel, un frontend React et une base de donnée MySQL.
 
