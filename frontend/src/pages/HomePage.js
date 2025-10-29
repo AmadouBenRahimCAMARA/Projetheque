@@ -31,12 +31,18 @@ const HomePage = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
-                background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.main} 90%)`,
-                color: 'white',
+
+                color: theme.palette.text.primary, // Dark text for contrast with light gradient
                 py: 8, // Padding top/bottom
             }}
         >
-            <Container maxWidth="md">
+            <Container maxWidth="md" sx={{
+                background: `linear-gradient(45deg, #1976d2 0%, #FFFFFF 50%, #FF0000 100%)`,
+                color: theme.palette.text.primary,
+                p: 4, // Add padding around the content
+                borderRadius: 2, // Optional: add some rounded corners
+                boxShadow: 3, // Optional: add some shadow
+            }}>
                 <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ mb: 2 }}>
                     <SchoolIcon sx={{ fontSize: '3rem' }} />
                     <Typography component="h1" variant="h2" gutterBottom sx={{ fontWeight: 700, mb: 0 }}>
@@ -58,7 +64,7 @@ const HomePage = () => {
                         <Button variant="contained" color="success" onClick={() => navigate('/login')} size="large">
                             Se connecter
                         </Button>
-                        <Button variant="outlined" color="inherit" onClick={() => navigate('/register')} size="large" sx={{ borderColor: 'white', color: 'white' }}> 
+                        <Button variant="contained" color="primary" onClick={() => navigate('/register')} size="large"> 
                             S'inscrire
                         </Button>
                     </Stack>

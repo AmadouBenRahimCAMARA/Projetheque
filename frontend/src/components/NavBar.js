@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import logo from '../assets/images/logo1.png'; // Import the logo
 
 const NavBar = () => {
     const { isAuthenticated, user, logout, loading } = useAuth();
@@ -38,6 +39,7 @@ const NavBar = () => {
         return (
             <AppBar position="fixed">
                 <Toolbar>
+                    <img src={logo} alt="Logo" style={{ height: '40px', marginRight: '10px' }} /> {/* Logo for loading state */}
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Projethèque
                     </Typography>
@@ -49,6 +51,7 @@ const NavBar = () => {
     return (
         <AppBar position="fixed">
             <Toolbar>
+                <img src={logo} alt="Logo" style={{ height: '40px', marginRight: '10px' }} /> {/* Logo */}
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
                         Projethèque

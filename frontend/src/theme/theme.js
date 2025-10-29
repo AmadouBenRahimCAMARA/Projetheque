@@ -1,4 +1,5 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+import backgroundImage from '../assets/images/fond.png'; // Assuming your image is named background.jpg
 
 let theme = createTheme({
     palette: {
@@ -31,8 +32,7 @@ let theme = createTheme({
         MuiCssBaseline: {
             styleOverrides: {
                 body: {
-                    background: `linear-gradient(45deg, #1976d2 30%, #dc004e 90%)`,
-                    backgroundAttachment: 'fixed',
+                    background: `url(${backgroundImage}) center/cover no-repeat fixed`,
                 },
             },
         },
