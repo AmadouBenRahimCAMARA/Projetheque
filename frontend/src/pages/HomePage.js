@@ -32,16 +32,16 @@ const HomePage = () => {
                 alignItems: 'center',
                 textAlign: 'center',
 
-                color: theme.palette.text.primary, // Dark text for contrast with light gradient
-                py: 8, // Padding top/bottom
+                color: theme.palette.text.primary, // Texte foncé pour le contraste avec le dégradé clair
+                py: 8, // Rembourrage haut/bas
             }}
         >
             <Container maxWidth="md" sx={{
                 background: `linear-gradient(45deg, #1976d2 0%, #FFFFFF 50%, #FF0000 100%)`,
                 color: theme.palette.text.primary,
-                p: 4, // Add padding around the content
-                borderRadius: 2, // Optional: add some rounded corners
-                boxShadow: 3, // Optional: add some shadow
+                p: 4, // Ajouter du rembourrage autour du contenu
+                borderRadius: 2, // Optionnel : ajouter des coins arrondis
+                boxShadow: 3, // Optionnel : ajouter une ombre
             }}>
                 <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ mb: 2 }}>
                     <SchoolIcon sx={{ fontSize: '3rem' }} />

@@ -21,7 +21,7 @@ function App() {
                 <CssBaseline />
                 <AuthProvider>
                     <NavBar />
-                    <Box component="main" sx={{ mt: 8 }}> {/* mt is theme.spacing(8) = 64px */}
+                    <Box component="main" sx={{ mt: 8 }}> {/* mt est theme.spacing(8) = 64px */} 
                         <Routes>
                             <Route path="/login" element={<LoginPage />} />
                             <Route path="/register" element={<RegisterPage />} />
@@ -33,7 +33,7 @@ function App() {
                             <Route path="/projets/:id/edit" element={<ProjetFormPage />} />
                             <Route path="/ressources" element={<RessourceListPage />} />
                             <Route path="/ressources/create" element={<RessourceFormPage />} />
-                        <Route path="/admin" element={<AdminDashboardPage />} />
+                            <Route path="/admin" element={<AdminDashboardPage />} />
                         </Routes>
                     </Box>
                 </AuthProvider>

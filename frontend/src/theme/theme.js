@@ -1,5 +1,5 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
-import backgroundImage from '../assets/images/fond.png'; // Assuming your image is named background.jpg
+import backgroundImage from '../assets/images/fond.png'; // En supposant que votre image est nommée background.jpg
 
 let theme = createTheme({
     palette: {
@@ -55,10 +55,10 @@ let theme = createTheme({
             styleOverrides: {
                 root: {
                     '& .MuiInputBase-input': {
-                        color: 'rgba(0, 0, 0, 0.87)', // Default dark text
+                        color: 'rgba(0, 0, 0, 0.87)', // Texte sombre par défaut
                     },
                     '& .MuiInputLabel-root': {
-                        color: 'rgba(0, 0, 0, 0.6)', // Default dark label
+color: 'rgba(0, 0, 0, 0.6)', // Étiquette sombre par défaut
                     },
                     '& .MuiOutlinedInput-root': {
                         '& fieldset': {
@@ -77,7 +77,7 @@ let theme = createTheme({
         MuiSelect: {
             styleOverrides: {
                 root: {
-                    color: 'rgba(0, 0, 0, 0.87)', // Default dark text
+                    color: 'rgba(0, 0, 0, 0.87)', // Texte sombre par défaut
                     '& .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#1976d2',
                     },
@@ -88,7 +88,7 @@ let theme = createTheme({
                         borderColor: '#1976d2',
                     },
                     '& .MuiSelect-icon': {
-                        color: 'rgba(0, 0, 0, 0.54)', // Default dark icon
+                        color: 'rgba(0, 0, 0, 0.54)', // Icône sombre par défaut
                     },
                 },
             },
@@ -96,7 +96,7 @@ let theme = createTheme({
         MuiInputLabel: {
             styleOverrides: {
                 root: {
-                    color: 'rgba(0, 0, 0, 0.6)', // Default dark label
+                    color: 'rgba(0, 0, 0, 0.6)', // Étiquette sombre par défaut
                 },
             },
         },

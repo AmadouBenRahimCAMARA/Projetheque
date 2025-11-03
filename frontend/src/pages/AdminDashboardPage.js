@@ -3,6 +3,7 @@ import { Container, Typography, Box, CircularProgress, Alert, Button, TextField,
 import { useAuth } from '../contexts/AuthContext';
 import filiereService from '../services/filiereService';
 import userService from '../services/userService';
+import academicYearService from '../services/academicYearService'; // Importer le nouveau service
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
@@ -24,6 +25,12 @@ const AdminDashboardPage = () => {
     const [currentFiliere, setCurrentFiliere] = useState(null);
     const [filiereNom, setFiliereNom] = useState('');
 
+    // États de l'année académique
+    const [academicYears, setAcademicYears] = useState([]);
+    const [openAcademicYearDialog, setOpenAcademicYearDialog] = useState(false);
+    const [currentAcademicYear, setCurrentAcademicYear] = useState(null);
+    const [academicYearValue, setAcademicYearValue] = useState('');
+
     useEffect(() => {
         if (!authLoading && (!user || user.role !== 'administrateur')) {
             setError('Accès non autorisé. Seuls les administrateurs peuvent accéder à cette page.');
@@ -34,8 +41,22 @@ const AdminDashboardPage = () => {
             fetchFilieres();
             fetchUsers();
             fetchStatistics();
+            fetchAcademicYears(); // Récupérer les années académiques
         }
     }, [user, token, authLoading]);
+
+    const fetchAcademicYears = async () => {
+        setLoading(true);
+        try {
+            const response = await academicYearService.getAcademicYears(token);
+            setAcademicYears(response.data);
+        } catch (err) {
+            setError('Erreur lors du chargement des années académiques.');
+            console.error("Erreur fetchAcademicYears:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchFilieres = async () => {
         setLoading(true);
@@ -76,10 +97,17 @@ const AdminDashboardPage = () => {
         }
     };
 
-    const handleOpenDialog = (filiere = null) => {
+    const handleOpenFiliereDialog = (filiere = null) => {
         setCurrentFiliere(filiere);
         setFiliereNom(filiere ? filiere.nom : '');
         setOpenDialog(true);
+    };
+
+    const handleCloseFiliereDialog = () => {
+        setOpenDialog(false);
+        setCurrentFiliere(null);
+        setFiliereNom('');
+        setError('');
     };
 
     const handleCloseDialog = () => {
@@ -87,6 +115,53 @@ const AdminDashboardPage = () => {
         setCurrentFiliere(null);
         setFiliereNom('');
         setError('');
+    };
+
+    // Gestionnaires d'années académiques
+    const handleOpenAcademicYearDialog = (year = '', id = null) => {
+        setAcademicYearValue(year);
+        setCurrentAcademicYear(id);
+        setOpenAcademicYearDialog(true);
+    };
+
+    const handleCloseAcademicYearDialog = () => {
+        setOpenAcademicYearDialog(false);
+        setAcademicYearValue('');
+        setCurrentAcademicYear(null);
+        setError('');
+    };
+
+    const handleSubmitAcademicYear = async () => {
+        setError('');
+        if (!academicYearValue.trim()) {
+            setError("L'année académique ne peut pas être vide.");
+            return;
+        }
+
+        try {
+            if (currentAcademicYear) {
+                await academicYearService.updateAcademicYear(currentAcademicYear, academicYearValue, token);
+            } else {
+                await academicYearService.createAcademicYear(academicYearValue, token);
+            }
+            fetchAcademicYears();
+            handleCloseAcademicYearDialog();
+        } catch (err) {
+            setError("Erreur lors de la soumission de l'année académique.");
+            console.error(err);
+        }
+    };
+
+    const handleDeleteAcademicYear = async (id) => {
+        if (window.confirm('Êtes-vous sûr de vouloir supprimer cette année académique ?')) {
+            try {
+                await academicYearService.deleteAcademicYear(id, token);
+                fetchAcademicYears();
+            } catch (err) {
+                setError("Erreur lors de la suppression de l'année académique.");
+                console.error(err);
+            }
+        }
     };
 
     const handleSubmitFiliere = async () => {
@@ -124,7 +199,7 @@ const AdminDashboardPage = () => {
     const handleUpdateUserRole = async (userId, newRole) => {
         try {
             await userService.updateUserRole(userId, newRole, token);
-            fetchUsers(); // Re-fetch users to update the list
+            fetchUsers(); // Re-récupérer les utilisateurs pour mettre à jour la liste
         } catch (err) {
             setError('Erreur lors de la mise à jour du rôle de l\'utilisateur.');
             console.error("Erreur handleUpdateUserRole:", err.response ? err.response.data : err);
@@ -236,7 +311,7 @@ const AdminDashboardPage = () => {
                         Gestion des Filières
                     </Typography>
                 </Stack>
-                <Button variant="contained" color="success" onClick={() => handleOpenDialog()} sx={{ mb: 2 }}>
+                <Button variant="contained" color="success" onClick={() => handleOpenFiliereDialog()} sx={{ mb: 2 }}>
                     Ajouter une Filière
                 </Button>
 
@@ -250,7 +325,7 @@ const AdminDashboardPage = () => {
                             key={filiere.id}
                             secondaryAction={
                                 <Box>
-                                    <IconButton edge="end" aria-label="edit" onClick={() => handleOpenDialog(filiere)}>
+                                    <IconButton edge="end" aria-label="edit" onClick={() => handleOpenFiliereDialog(filiere)}>
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFiliere(filiere.id)}>
@@ -264,10 +339,10 @@ const AdminDashboardPage = () => {
                     ))}
                 </List>
 
-                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                <Dialog open={openDialog} onClose={handleCloseFiliereDialog}>
                     <DialogTitle>{currentFiliere ? 'Modifier la Filière' : 'Ajouter une Nouvelle Filière'}</DialogTitle>
                     <DialogContent>
-                        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+                        {error && <Alert severity="error" sx={{ mb: 2 }}>{String(error)}</Alert>}
                         <TextField
                             autoFocus
                             margin="dense"
@@ -281,8 +356,65 @@ const AdminDashboardPage = () => {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleCloseDialog}>Annuler</Button>
+                        <Button onClick={handleCloseFiliereDialog}>Annuler</Button>
                         <Button onClick={handleSubmitFiliere}>{currentFiliere ? 'Modifier' : 'Ajouter'}</Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Section Gestion des Années Académiques */}
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 4, mb: 2 }}>
+                    <SchoolIcon color="primary" />
+                    <Typography variant="h5" component="h2" sx={{ mb: 0 }}>
+                        Gestion des Années Académiques
+                    </Typography>
+                </Stack>
+                <Button variant="contained" color="success" onClick={() => handleOpenAcademicYearDialog()} sx={{ mb: 2 }}>
+                    Ajouter une Année Académique
+                </Button>
+
+                {academicYears.length === 0 && !loading && (
+                    <Typography variant="body1">Aucune année académique disponible.</Typography>
+                )}
+
+                <List>
+                    {academicYears.map((year) => (
+                        <ListItem
+                            key={year.id}
+                            secondaryAction={
+                                <Box>
+                                    <IconButton edge="end" aria-label="edit" onClick={() => handleOpenAcademicYearDialog(year.year, year.id)}>
+                                        <EditIcon />
+                                    </IconButton>
+                                    <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteAcademicYear(year.id)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </Box>
+                            }
+                        >
+                            <ListItemText primary={year.year} />
+                        </ListItem>
+                    ))}
+                </List>
+
+                <Dialog open={openAcademicYearDialog} onClose={handleCloseAcademicYearDialog}>
+                    <DialogTitle>{currentAcademicYear ? "Modifier l'année académique" : "Ajouter une nouvelle année académique"}</DialogTitle>
+                    <DialogContent>
+                        {error && <Alert severity="error" sx={{ mb: 2 }}>{String(error)}</Alert>}
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="academicYear"
+                            label="Année Académique (ex: 2024-2025)"
+                            type="text"
+                            fullWidth
+                            variant="standard"
+                            value={academicYearValue}
+                            onChange={(e) => setAcademicYearValue(e.target.value)}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseAcademicYearDialog}>Annuler</Button>
+                        <Button onClick={handleSubmitAcademicYear}>{currentAcademicYear ? 'Modifier' : 'Ajouter'}</Button>
                     </DialogActions>
                 </Dialog>
 

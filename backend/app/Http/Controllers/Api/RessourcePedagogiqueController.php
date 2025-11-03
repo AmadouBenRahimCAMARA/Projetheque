@@ -33,7 +33,7 @@ class RessourcePedagogiqueController extends Controller
             'description' => 'required|string',
             'type' => 'required|in:cours,exercice,sujet_examen',
             'filiere_id' => 'required|exists:filieres,id',
-            'fichier' => 'required|file|mimes:pdf|max:20480', // 20MB Max
+            'fichier' => 'required|file|mimes:pdf|max:20480', // 20 Mo Max
         ]);
 
         $path = $request->file('fichier')->store('ressources_pedagogiques', 'public');
@@ -64,15 +64,15 @@ class RessourcePedagogiqueController extends Controller
             'description' => 'sometimes|required|string',
             'type' => 'sometimes|required|in:cours,exercice,sujet_examen',
             'filiere_id' => 'sometimes|required|exists:filieres,id',
-            'fichier' => 'nullable|file|mimes:pdf|max:20480', // 20MB Max
+            'fichier' => 'nullable|file|mimes:pdf|max:20480', // 20 Mo Max
         ]);
 
         if ($request->hasFile('fichier')) {
-            // Delete old file
+            // Supprimer l'ancien fichier
             if ($ressourcePedagogique->chemin_fichier) {
                 Storage::disk('public')->delete($ressourcePedagogique->chemin_fichier);
             }
-            // Store new file
+            // Stocker le nouveau fichier
             $validatedData['chemin_fichier'] = $request->file('fichier')->store('ressources_pedagogiques', 'public');
         }
 
@@ -87,7 +87,7 @@ class RessourcePedagogiqueController extends Controller
 
         $this->authorize('delete', $ressourcePedagogique);
 
-        // Check if a file path exists before attempting to delete
+        // Vérifier si un chemin de fichier existe avant de tenter de supprimer
         if ($ressourcePedagogique->chemin_fichier) {
             Storage::disk('public')->delete($ressourcePedagogique->chemin_fichier);
         }

@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import logo from '../assets/images/logo1.png'; // Import the logo
+import logo from '../assets/images/logo1.png'; // Importer le logo
 
 const NavBar = () => {
     const { isAuthenticated, user, logout, loading } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation(); // Obtenir l'emplacement actuel
+    const currentPath = location.pathname; // Obtenir le chemin actuel
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -39,7 +41,7 @@ const NavBar = () => {
         return (
             <AppBar position="fixed">
                 <Toolbar>
-                    <img src={logo} alt="Logo" style={{ height: '40px', marginRight: '10px' }} /> {/* Logo for loading state */}
+                    <img src={logo} alt="Logo" style={{ height: '40px', marginRight: '10px' }} /> {/* Logo pour l'état de chargement */}
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Projethèque
                     </Typography>
@@ -85,22 +87,22 @@ const NavBar = () => {
                         >
                             {isAuthenticated && (
                                 <div>
-                                    <MenuItem onClick={() => handleNavigation('/projets')}>Projets</MenuItem>
-                                    <MenuItem onClick={() => handleNavigation('/ressources')}>Ressources</MenuItem>
+                                    <MenuItem onClick={() => handleNavigation('/projets')} sx={currentPath.startsWith('/projets') ? { borderBottom: '2px solid white' } : {}}>Projets</MenuItem>
+                                    <MenuItem onClick={() => handleNavigation('/ressources')} sx={currentPath.startsWith('/ressources') ? { borderBottom: '2px solid white' } : {}}>Ressources</MenuItem>
                                 </div>
                             )}
                             {isAuthenticated && user && user.role === 'etudiant' && (
-                                <MenuItem onClick={() => handleNavigation('/projets/create')}>Soumettre Projet</MenuItem>
+                                <MenuItem onClick={() => handleNavigation('/projets/create')} sx={currentPath === '/projets/create' ? { borderBottom: '2px solid white' } : {}}>Soumettre Projet</MenuItem>
                             )}
                             {isAuthenticated && user && user.role === 'administrateur' && (
-                                <MenuItem onClick={() => handleNavigation('/admin')}>Admin</MenuItem>
+                                <MenuItem onClick={() => handleNavigation('/admin')} sx={currentPath.startsWith('/admin') ? { borderBottom: '2px solid white' } : {}}>Admin</MenuItem>
                             )}
                             {isAuthenticated ? (
                                 <MenuItem onClick={handleLogout} sx={{ bgcolor: 'error.main', color: 'white' }}>Déconnexion</MenuItem>
                             ) : (
                                 <Box>
-                                    <MenuItem onClick={() => handleNavigation('/login')}>Connexion</MenuItem>
-                                    <MenuItem onClick={() => handleNavigation('/register')}>Inscription</MenuItem>
+                                    <MenuItem onClick={() => handleNavigation('/login')} sx={currentPath === '/login' ? { borderBottom: '2px solid white' } : {}}>Connexion</MenuItem>
+                                    <MenuItem onClick={() => handleNavigation('/register')} sx={currentPath === '/register' ? { borderBottom: '2px solid white' } : {}}>Inscription</MenuItem>
                                 </Box>
                             )}
                         </Menu>
@@ -109,22 +111,21 @@ const NavBar = () => {
                     <Box>
                         {isAuthenticated && (
                             <>
-                                <Button color="inherit" component={Link} to="/projets">
+                                <Button color="inherit" component={Link} to="/projets" sx={currentPath.startsWith('/projets') ? { borderBottom: '2px solid white' } : {}}>
                                     Projets
                                 </Button>
-                                <Button color="inherit" component={Link} to="/ressources">
+                                <Button color="inherit" component={Link} to="/ressources" sx={currentPath.startsWith('/ressources') ? { borderBottom: '2px solid white' } : {}}>
                                     Ressources
                                 </Button>
                             </>
                         )}
                         {isAuthenticated && user && user.role === 'etudiant' && (
-                            <Button color="inherit" component={Link} to="/projets/create">
+                            <Button color="inherit" component={Link} to="/projets/create" sx={currentPath === '/projets/create' ? { borderBottom: '2px solid white' } : {}}>
                                 Soumettre Projet
                             </Button>
                         )}
                         {isAuthenticated && user && user.role === 'administrateur' && (
-                            <Button color="inherit" component={Link} to="/admin">
-                                Admin
+                                                            <Button color="inherit" component={Link} to="/admin" sx={currentPath.startsWith('/admin') ? { borderBottom: '2px solid white' } : {}}>                                Admin
                             </Button>
                         )}
                         {isAuthenticated ? (
@@ -138,10 +139,10 @@ const NavBar = () => {
                             </>
                         ) : (
                             <>
-                                <Button color="inherit" component={Link} to="/login">
+                                <Button color="inherit" component={Link} to="/login" sx={currentPath === '/login' ? { borderBottom: '2px solid white' } : {}}>
                                     Connexion
                                 </Button>
-                                <Button color="inherit" component={Link} to="/register">
+                                <Button color="inherit" component={Link} to="/register" sx={currentPath === '/register' ? { borderBottom: '2px solid white' } : {}}>
                                     Inscription
                                 </Button>
                             </>

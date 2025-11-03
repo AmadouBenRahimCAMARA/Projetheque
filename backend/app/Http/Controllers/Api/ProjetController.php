@@ -53,9 +53,7 @@ class ProjetController extends Controller
             'annee_academique' => 'required|string|max:255',
             'filiere_id' => 'required|exists:filieres,id',
             'lien_github' => 'nullable|url',
-            'rapport' => 'nullable|file|mimes:pdf|max:10240', // 10MB Max
-            'code_source' => 'nullable|file|mimes:zip|max:51200', // 50MB Max
-            'presentation' => 'nullable|file|mimes:pdf,ppt,pptx|max:20480', // 20MB Max
+'presentation' => 'nullable|file|mimes:pdf,ppt,pptx|max:20480', // 20 Mo Max
         ]);
 
         $fichiers = [];
@@ -109,14 +107,14 @@ class ProjetController extends Controller
             'annee_academique' => 'required|string|max:255',
             'filiere_id' => 'required|exists:filieres,id',
             'lien_github' => 'nullable|url',
-            'rapport' => 'nullable|file|mimes:pdf|max:10240', // 10MB Max
-            'code_source' => 'nullable|file|mimes:zip|max:51200', // 50MB Max
-            'presentation' => 'nullable|file|mimes:pdf,ppt,pptx|max:20480', // 20MB Max
+            'rapport' => 'nullable|file|mimes:pdf|max:10240', // 10 Mo Max
+            'code_source' => 'nullable|file|mimes:zip|max:51200', // 50 Mo Max
+            'presentation' => 'nullable|file|mimes:pdf,ppt,pptx|max:20480', // 20 Mo Max
         ]);
 
         $fichiers = $projet->fichiers ?? [];
 
-        // Handle rapport file
+        // Gérer le fichier de rapport
         if ($request->hasFile('rapport')) {
             if (isset($fichiers['rapport'])) {
                 Storage::disk('public')->delete($fichiers['rapport']);
@@ -129,7 +127,7 @@ class ProjetController extends Controller
             }
         }
 
-        // Handle code_source file
+        // Gérer le fichier de code source
         if ($request->hasFile('code_source')) {
             if (isset($fichiers['code_source'])) {
                 Storage::disk('public')->delete($fichiers['code_source']);
@@ -142,7 +140,7 @@ class ProjetController extends Controller
             }
         }
 
-        // Handle presentation file
+        // Gérer le fichier de présentation
         if ($request->hasFile('presentation')) {
             if (isset($fichiers['presentation'])) {
                 Storage::disk('public')->delete($fichiers['presentation']);

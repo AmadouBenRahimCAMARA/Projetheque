@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import projetService from '../services/projetService';
 import filiereService from '../services/filiereService';
+import academicYearService from '../services/academicYearService'; // Importer le nouveau service
 import { TextField, Button, Container, Typography, Box, CircularProgress, Alert, FormControl, InputLabel, Select, MenuItem, Grid, InputAdornment, Stack } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CodeIcon from '@mui/icons-material/Code';
@@ -24,6 +25,7 @@ const ProjetFormPage = () => {
     const [codeSource, setCodeSource] = useState(null);
     const [presentation, setPresentation] = useState(null);
     const [filieres, setFilieres] = useState([]);
+    const [academicYears, setAcademicYears] = useState([]); // Nouvel état pour les années académiques
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
@@ -33,6 +35,10 @@ const ProjetFormPage = () => {
             try {
                 const filieresResponse = await filiereService.getFilieres(token);
                 setFilieres(filieresResponse.data);
+
+                const academicYearsResponse = await academicYearService.getAcademicYears(token);
+                setAcademicYears(academicYearsResponse.data);
+
 
                 if (id) {
                     setIsEditing(true);
@@ -144,14 +150,21 @@ const ProjetFormPage = () => {
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                label="Année Académique (ex: 2023-2024)"
-                                value={anneeAcademique}
-                                onChange={(e) => setAnneeAcademique(e.target.value)}
-                            />
+                            <FormControl fullWidth margin="normal" required sx={{ minWidth: 180 }}>
+                                <InputLabel id="annee-academique-label">Année Académique</InputLabel>
+                                <Select
+                                    labelId="annee-academique-label"
+                                    value={anneeAcademique}
+                                    label="Année Académique"
+                                    onChange={(e) => setAnneeAcademique(e.target.value)}
+                                >
+                                    {academicYears.map((annee) => (
+                                        <MenuItem key={annee.id} value={annee.year}>
+                                            {annee.year}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={12}>
                             <FormControl fullWidth margin="normal" required sx={{ minWidth: 180 }}>

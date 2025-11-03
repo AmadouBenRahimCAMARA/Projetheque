@@ -45,7 +45,7 @@ const ProjetDetailPage = () => {
             await noteService.createNote(id, { note, commentaire: commentaireNote }, token);
             setNote('');
             setCommentaireNote('');
-            fetchProjet(); // Re-fetch project to show the new note
+            fetchProjet(); // Re-récupérer le projet pour afficher la nouvelle note
         } catch (err) {
             setNoteError(err.response?.data?.message || 'Une erreur est survenue lors de l\'ajout de la note.');
         } finally {

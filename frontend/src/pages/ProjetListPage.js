@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import projetService from '../services/projetService';
 import filiereService from '../services/filiereService'; // Import du service filiere
+import academicYearService from '../services/academicYearService'; // Importer le nouveau service
 import { Container, Typography, Box, CircularProgress, Alert, Grid, Card, CardContent, CardActions, Button, FormControl, InputLabel, Select, MenuItem, Stack } from '@mui/material';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { Link } from 'react-router-dom';
@@ -12,9 +13,10 @@ const ProjetListPage = () => {
     const { token } = useAuth();
     const [projets, setProjets] = useState([]);
     const [filieres, setFilieres] = useState([]);
+    const [academicYears, setAcademicYears] = useState([]); // Nouvel état pour les années académiques
     const [selectedFiliere, setSelectedFiliere] = useState('');
     const [selectedAnnee, setSelectedAnnee] = useState('');
-    const [sortByNote, setSortByNote] = useState(''); // New state for sorting
+    const [sortByNote, setSortByNote] = useState(''); // Nouvel état pour le tri
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -28,6 +30,9 @@ const ProjetListPage = () => {
             try {
                 const filieresResponse = await filiereService.getFilieres(token);
                 setFilieres(filieresResponse.data);
+
+                const academicYearsResponse = await academicYearService.getAcademicYears(token);
+                setAcademicYears(academicYearsResponse.data);
             } catch (err) {
                 console.error("Erreur lors du chargement des filières:", err);
                 setError('Erreur lors du chargement des filières.');
@@ -46,7 +51,7 @@ const ProjetListPage = () => {
                 const params = {};
                 if (selectedFiliere) params.filiere = selectedFiliere;
                 if (selectedAnnee) params.annee_academique = selectedAnnee;
-                if (sortByNote) params.sort_by_note = sortByNote; // Add sort parameter
+                if (sortByNote) params.sort_by_note = sortByNote; // Ajouter le paramètre de tri
 
                 const response = await projetService.getProjets(token, params);
                 setProjets(response.data);
@@ -60,7 +65,7 @@ const ProjetListPage = () => {
         if (token) {
             fetchProjets();
         }
-    }, [token, selectedFiliere, selectedAnnee, sortByNote]); // Add sortByNote to dependencies
+    }, [token, selectedFiliere, selectedAnnee, sortByNote]); // Ajouter sortByNote aux dépendances
 
     if (loading) {
         return (
@@ -80,12 +85,7 @@ const ProjetListPage = () => {
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4 }}>
-            <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ mb: 2 }}>
-                <ListAltIcon sx={{ fontSize: '2.5rem', color: 'white' }} />
-                <Typography variant="h4" component="h1" gutterBottom color="white" sx={{ mb: 0 }}>
-                    Liste des Projets
-                </Typography>
-            </Stack>
+
 
             <Box sx={{
                 bgcolor: 'background.paper',
@@ -123,15 +123,15 @@ const ProjetListPage = () => {
                             onChange={(e) => setSelectedAnnee(e.target.value)}
                         >
                             <MenuItem value="">Toutes les années</MenuItem>
-                            {anneesAcademiques.map((annee) => (
-                                <MenuItem key={annee} value={annee}>
-                                    {annee}
+                            {academicYears.map((annee) => (
+                                <MenuItem key={annee.id} value={annee.year}>
+                                    {annee.year}
                                 </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
 
-                    {/* New Sort by Note Control */}
+                    {/* Nouveau contrôle de tri par note */}
                     <FormControl fullWidth={isMobile} sx={{ minWidth: 180 }}>
                         <InputLabel id="sort-by-note-label">Trier par Note</InputLabel>
                         <Select
@@ -153,7 +153,7 @@ const ProjetListPage = () => {
                 {projets.length > 0 ? (
                     projets.map((projet) => (
                         <Grid item key={projet.id} xs={12} sm={6} md={4}>
-                            <Card>
+                            <Card sx={{ border: '5px solid #1976d2' }}>
                                 <CardContent>
                                     <Typography variant="h6" component="div" color="primary">
                                         {projet.titre}
@@ -161,13 +161,13 @@ const ProjetListPage = () => {
                                     <Typography variant="body2" color="text.secondary">
                                         {projet.description.substring(0, 100)}...
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography variant="body2" color="primary">
                                         Année: {projet.annee_academique}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography variant="body2" color="primary">
                                         Filière: {projet.filiere ? projet.filiere.nom : 'N/A'}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography variant="body2" color="primary">
                                         Auteur: {projet.utilisateur ? projet.utilisateur.nom : 'N/A'}
                                     </Typography>
                                     {projet.notes_avg_note !== null && (

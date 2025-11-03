@@ -19,7 +19,7 @@ const RessourceListPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // State for delete confirmation dialog
+    // État pour la boîte de dialogue de confirmation de suppression
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [ressourceIdToDelete, setRessourceIdToDelete] = useState(null);
 
@@ -74,19 +74,19 @@ const RessourceListPage = () => {
             .catch(error => console.error('Erreur de téléchargement', error));
     };
 
-    // Opens the confirmation dialog
+    // Ouvre la boîte de dialogue de confirmation
     const handleDeleteClick = (id) => {
         setRessourceIdToDelete(id);
         setOpenDeleteDialog(true);
     };
 
-    // Closes the confirmation dialog
+    // Ferme la boîte de dialogue de confirmation
     const handleCloseDeleteDialog = () => {
         setOpenDeleteDialog(false);
         setRessourceIdToDelete(null);
     };
 
-    // Handles the actual deletion after confirmation
+    // Gère la suppression réelle après confirmation
     const handleConfirmDelete = () => {
         if (ressourceIdToDelete) {
             ressourcePedagogiqueService.deleteRessource(ressourceIdToDelete, token)
@@ -112,12 +112,7 @@ const RessourceListPage = () => {
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4 }}>
-            <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ mb: 2 }}>
-                <SchoolIcon sx={{ fontSize: '2.5rem', color: 'white' }} />
-                <Typography variant="h4" component="h1" gutterBottom color="white" sx={{ mb: 0 }}>
-                    Ressources Pédagogiques
-                </Typography>
-            </Stack>
+
 
             <Box sx={{ bgcolor: 'background.paper', p: 2, borderRadius: 2, boxShadow: 1, mb: 4 }}>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between">
@@ -149,13 +144,13 @@ const RessourceListPage = () => {
                 {ressources.length > 0 ? (
                     ressources.map(ressource => (
                         <Grid item key={ressource.id} xs={12} sm={6} md={4}>
-                            <Card>
+                            <Card sx={{ border: '5px solid #1976d2' }}>
                                 <CardContent>
                                     <Typography variant="h6" component="div" color="primary">{ressource.titre}</Typography>
                                     <Typography variant="body2" color="text.secondary">{ressource.description.substring(0, 100)}...</Typography>
-                                    <Typography variant="caption" display="block" sx={{ mt: 1 }}>Type: {ressource.type}</Typography>
-                                    <Typography variant="caption" display="block">Filière: {ressource.filiere.nom}</Typography>
-                                    <Typography variant="caption" display="block">Auteur: {ressource.utilisateur.nom}</Typography>
+                                    <Typography variant="caption" display="block" color="primary" sx={{ mt: 1 }}>Type: {ressource.type}</Typography>
+                                    <Typography variant="caption" display="block" color="primary" >Filière: {ressource.filiere.nom}</Typography>
+                                    <Typography variant="caption" display="block" color="primary" >Auteur: {ressource.utilisateur.nom}</Typography>
                                 </CardContent>
                                 <CardActions>
                                     <Button variant="contained" color="success" size="small" onClick={() => handleDownload(ressource)}>Télécharger</Button>
@@ -175,7 +170,7 @@ const RessourceListPage = () => {
                 )}
             </Grid>
 
-            {/* Delete Confirmation Dialog */}
+            {/* Boîte de dialogue de confirmation de suppression */}
             <Dialog
                 open={openDeleteDialog}
                 onClose={handleCloseDeleteDialog}

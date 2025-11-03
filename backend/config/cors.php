@@ -20,7 +20,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3000'], // Allow your React frontend
+    'allowed_origins' => ['http://localhost:3000'], // Autoriser votre frontend React
 
     'allowed_origins_patterns' => [],
 

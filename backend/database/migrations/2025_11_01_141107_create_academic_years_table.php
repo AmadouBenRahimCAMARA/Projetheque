@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('telechargements', function (Blueprint $table) {
+        Schema::create('academic_years', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('projet_id')->constrained('projets')->onDelete('cascade');
-            $table->foreignId('utilisateur_id')->nullable()->constrained('utilisateurs')->onDelete('set null');
-            $table->string('type_fichier'); // par exemple, 'rapport', 'code_source', 'presentation'
+            $table->string('year')->unique();
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('telechargements');
+        Schema::dropIfExists('academic_years');
     }
 };
